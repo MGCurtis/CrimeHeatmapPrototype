@@ -1,0 +1,61 @@
+<html>
+<head>
+  <meta charset=utf-8 />
+  <title>Mapping Prototype</title>
+  <!--meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' /-->
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css"
+    integrity="sha512-M2wvCLH6DSRazYeZRIm1JnYyh22purTM+FDB5CsyxtQJYeKq83arPe5wgbNmcFXGqiSH2XR8dT/fJISVA1r/zQ=="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+    integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+    crossorigin=""></script>
+
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"
+   integrity="sha512-lInM/apFSqyy1o6s89K4iQUKg6ppXEgsVxT35HbzUupEVRh2Eu9Wdl4tHj7dZO0s1uvplcYGmt3498TtHq+log=="
+   crossorigin=""></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <style>
+    /*body { margin:0; padding:0; }*/
+    #map { height: 90%; }
+  </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script>
+    //Initializes map and sets initial viewpoint to center on Dublin with a zoom level of 11
+    var mymap = L.map("map").setView([53.33743, -6.2665], 11);
+    //Creates a popup object to be used for user interaction.
+    var popup = L.popup();
+
+    //Ajax request, makes a GET request to the REST API on the localhost to retrieve data from the postgres database
+    //Upon getting the data it iterates through the full array of Garda Station objects creating a marker at the lat and lon of each one
+    //When the user selects any of these markers a popup appears with the name, address, and county of the Garda Station
+    //All of this information was retrieve from the database at startup via the GET request
+    $.ajax({
+    url: 'http://127.0.0.1:8000/stations/',
+    //data: data,
+    success: function(data) {
+        console.log(data[311].name);
+        for(var i = 0; i < data.length; i++)
+        {
+            var marker = L.marker([data[i].Latitude, data[i].Longitude]).addTo(mymap);
+            marker.bindPopup("<b>" + data[i].name + " Garda Station</b><br>Address: " + data[i].Address + "<br> County: " + data[i].County);
+        }
+    }
+    //dataType: dataType
+    });
+
+    //Code for displaying map tiles, gotten from mapbox.com via an access token given at signup.
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    maxZoom: 18,
+    id: 'mapbox.streets',
+    accessToken: 'pk.eyJ1IjoibWdjdXJ0aXMiLCJhIjoiY2o5ZnV1Mjc4Mmh5eDJxcXFyMjYybGFoayJ9.D2h76jKSd3KHkeJ_-utQKw'
+    }).addTo(mymap);
+</script>
+
+</body>
+</html>
