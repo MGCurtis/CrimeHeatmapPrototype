@@ -10,7 +10,7 @@ defer==1.0.6
 dirspec==13.10
 Django==1.11.6
 django-cors-headers==2.1.0
-djangorestframework==3.7.1
+djangorestframework==3.11.2
 httplib2==0.9.1
 idna==2.0
 louis==2.6.4
